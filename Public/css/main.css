@@ -53,6 +53,14 @@ ul {
   left: 0;
 }
 
+.poem {
+  font-size: 13pt;
+}
+
+.poem h1 {
+  color: #B51910;
+}
+
 #letterl a {
   text-align: left;
 }

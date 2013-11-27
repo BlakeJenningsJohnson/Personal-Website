@@ -15,6 +15,10 @@ class MyApp < Sinatra::Base
     erb :poem
   end
 
+  get '/blog/:post_name' do
+    erb "/posts/#{params[:post_name]}".to_sym
+  end
+
   get '/blakebike.jpeg' do
     erb :blakebike
   end
