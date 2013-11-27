@@ -1,0 +1,18 @@
+body {
+  font-family: Lucidatypewriter, monospace, serif; 
+  font-size: 15pt;
+  line-height: 25pt;
+  margin-top: 150px;
+}
+
+#hash {
+  color: red;
+}
+
+#hash a {
+  display: none;
+}
+
+#hash:hover a {
+  display: inline-block;
+}

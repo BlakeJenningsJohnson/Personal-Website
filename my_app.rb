@@ -7,4 +7,16 @@ class MyApp < Sinatra::Base
     erb :index
   end
   #code
+  get '/bio' do
+    erb :bio
+  end
+
+  get '/poem' do
+    erb :poem
+  end
+
+  get '/blakebike.jpeg' do
+    erb :blakebike
+  end
+
 end
