@@ -53,6 +53,14 @@ ul {
   left: 0;
 }
 
+.word_blake div ul li {
+  padding: 8px;
+}
+
+.word_blake div ul li.borderlink {
+  border-top: 1px solid gray; 
+}
+
 .poem {
   font-size: 13pt;
 }

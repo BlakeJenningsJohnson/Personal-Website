@@ -8,7 +8,12 @@
     </head>
 
     <body>
+      <% @posts.each do |post| %>
+      <a href="/blog/<%= post %>"><% post %></a>
+      <% end %>
+
       <%= yield %>
+
       <div class='nav_bar'>
         <ul>
            <li>
