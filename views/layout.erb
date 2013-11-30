@@ -8,10 +8,11 @@
     </head>
 
     <body>
-      <% @posts.each do |post| %>
-      <a href="/blog/<%= post %>"><% post %></a>
+      <ul>
+        <% @sorted_posts.each do |post, date_array| %>
+          <li><a href="/blog/<%= post %>"><% post %></a></li>
       <% end %>
-
+      </ul>
       <%= yield %>
 
       <div class='nav_bar'>
