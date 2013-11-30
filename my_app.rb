@@ -32,12 +32,8 @@ class MyApp < Sinatra::Base
       @meta_data 
     else
       @meta_data = {}
-      puts @posts.inspect
-      puts "&&&&&&&&&&&&&&&&&&&&"
       @posts.each do |post|
         html = erb("/posts/#{post}".to_sym, layout: false)
-        puts html.inspect
-        puts "*******"
         meta = YAML.load(html.split("\n\n", 2).first)
         @meta_data[post] = meta 
       end
