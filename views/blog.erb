@@ -4,6 +4,8 @@
   <div class= 'blog_text' alt= 'blog_content'
     <% @sorted_posts.each do |post, meta_data| %>
      <%= remove_date(erb "/posts/#{post}".to_sym) %>
+     <a href= "/blog/<%= post %>"></a>
+     <%= meta_data["date"] %>
     <% end %>
   </div>
 </div>
