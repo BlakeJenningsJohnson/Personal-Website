@@ -1,7 +1,7 @@
 <h1>ALL THE BLOG POSTS</h1>
 
-<div class= 'blog_container' alt= 'blog_posts'
-  <div class= 'blog_text' alt= 'blog_content'
+<div class= 'blog_container' alt= 'blog_posts'>
+  <div class= 'blog_text' alt= 'blog_content'>
     <% @sorted_posts.each do |post, meta_data| %>
      <%= remove_date(erb "/posts/#{post}".to_sym) %>
      <a href= "/blog/<%= post %>"></a>
