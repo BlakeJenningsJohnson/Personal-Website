@@ -25,6 +25,10 @@ h1 {
   font-size: 10pt;
 }*/
 
+p.code {
+  font-family: Lucida Console;
+}
+
 .word_blake {
   font-size: 100px;
   min-width: 675px;
