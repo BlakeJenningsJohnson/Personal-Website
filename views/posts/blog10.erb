@@ -1,0 +1,68 @@
+date: 2014-20-01
+
+<h1>Javascript-- The Long Way, and the Not As Long Way</h1>
+
+<p>Ok, I learned Javascript this week. All of it.</p> 
+
+<p>JUST KIDDING.</p>
+
+<p>
+  But seriously, I learned a lot, thanks to Jeff Lembeck. The curve felt steep for me, though, so I’d like to spell out in painfully childlike terms how one goes about making sense of this language, which is actually pretty cool and useful, even if verbose. 
+</p>
+
+<p>
+  So, my analogy for understanding Javascript is that you have to think about the code much like you’d think about painting a pig blue as soon as it snorts. First you have to tell everyone to gather around and watch the amazingness artistry that is about to happen. You also have to get a pig, name it, and put it in the pen. Then you have to grab the pig in the pen. Then, you tell everyone, “Ok, as soon as this pig snorts, I’m going to start painting.” Your finished code will look something like this: (also, see bottom of the page for explanations of smaller syntax notes)
+</p>
+
+<h2>In Javascript, this is how this analogy plays out:</h2>
+
+<h3>1) Get everyone ready for the pig-painting:</h3>
+
+         <p class="code"> document.addEventListener("DOMContentLoaded", function ( e ) { </p>
+
+     <p>
+      The above, essentially, makes sure that the page is ready. You have built a pen for the pig.
+     </p>
+
+
+<h3>2) Round up a pig and name it:</h3>
+
+          <p class="code">var piglet = document.createElement("div”);</p>
+
+     <p>You now have created a div in your HTML. It has a variable name.</p>
+
+<h3>3) Tag the pig and put it in the pen:</h3>
+
+          <p class="code">piglet.id = “pig”;</p>
+
+               <p>Now you have given the div an id of “pig.” </p>
+
+          <p class="code">piglet.innerHTML= “This pig is about to get painted!”;</p>
+
+              <p> Now the page will show these words.</p>
+
+          <p class="code">document.body.appendChild( piglet );</p>
+          
+<p>Now you have attached the div to the document. You put the pig in the pen.</p>
+
+<h2>4) Grab the pig!</h2>
+
+          <p class="code">var myPig = document.querySelector ( “#pig” );</p>
+         
+    <p>You have queried the document and said “Hey, give me that thing in the document with the id “Pig.” And you named it “myPig.”</p>
+
+         <p class="code">myPig.addEventListener( “snort”, function ( e ) {</p>
+
+<p> Here, you tell the page to listen for an event. It could be a “click” of a mouse or “mouseover”. Here it’s a snort. Then you are saying, “When that happens, roll this function on that event (e). </p>
+
+          <p class="code">myPig.style.color = “blue”;</p>
+
+<p> This is the part that says, “Ok, when the “snort” event takes place, paint it all blue!”</p>
+
+<h2>5) });
+     });</h2>
+
+          <p>You just have to close a lot of stuff in Javascript. Maybe this is where you put the lid on the paint can. You may have also noticed all the ; that close each line. Do those, too.</p>
+
+
+<p>Yay! A blue pig!</p>
