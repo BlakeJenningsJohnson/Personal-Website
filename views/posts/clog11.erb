@@ -1,0 +1,66 @@
+date: 2014-01-26
+
+<h1>Single Table Inheritance: You Can Do It</h1>
+
+<p>This week at Ada we are creating aggregate news feeds. This blog, however, is not about those. It is about single-table inheritance. </p>
+
+<p>You can find some great resources out there telling you about STIs vs. polymorphic association. Rather than reiterate that stuff, I’m going to tell you that single table inheritance is LIKE A THOUSAND TIMES EASIER than those things make it sound. </p>
+
+<p>Let me explain briefly what STI is:</p>
+
+<p>Single Table Inheritance is essentially a system that allows models to inherit methods from one single model “above" them. It works best when you have a collection of models that share many characteristics, but are also distinct in some sense. For example, we used STI to create an aggregate news feed that funneled news from Tumblr, Twitter, and various RSS feeds. Those three feeds were all going to return  ActiveRecord objects from our database, but they were going to be called in distinct ways. Consider this:</p>
+
+<ul>
+  <li>Tumblr and Twitter both needed to establish a client, with required keys, to call on the API.</li>
+  <li>We would need to save the feeds from both as well. </li>
+  <li>We might want to call other things related to those feeds (saving posts, for example).</li> 
+</ul>
+
+<p>Rather than writing a conditional in a Feed model to sort out what was being called, we simply wrote methods with identical names (self.client and api_posts) in two different models named TumblrFeed and TwitterFeed. We also created the Feed model, which has a database with the column “type,” and we have both classes inheriting from the Feed model (which is empty, actually, except for a validation). Check out the code below:</p>
+
+<pre><code>
+class TumblrFeed < Feed
+
+  def self.client
+    Tumblr.configure do |config|
+      config.consumer_key = ENV["TUMBLR_KEY"]
+      config.consumer_secret = ENV["TUMBLR_SECRET"]
+      config.oauth_token = ENV["TUMBLR_OAUTH_ACCESS_TOKEN"]
+      config.oauth_token_secret = ENV["TUMBLR_OAUTH_SECRET_TOKEN"]
+    end
+    client = Tumblr::Client.new
+  end
+
+  def api_posts
+    TumblrFeed.client.posts(self.uid)
+  end 
+
+class TwitterFeed < Feed
+
+  def self.client
+    Twitter::REST::Client.new do |config|
+      config.consumer_key        = ENV["TWITTER_CONSUMER_KEY"]
+      config.consumer_secret     = ENV["TWITTER_CONSUMER_SECRET"]
+      config.access_token        = ENV["TWITTER_ACCESS_TOKEN"]
+      config.access_token_secret = ENV["TWITTER_ACCESS_TOKEN_SECRET"]
+    end
+  end
+
+  def api_posts
+    TwitterFeed.client.user_timeline(self.uid.to_i)
+  end
+end 
+
+class Feed < ActiveRecord::Base
+  validates :type, presence: true
+end 
+
+Now, I want my index to show all the feeds (both Tumblr and Twitter). So I simply write
+
+def index
+    @all_the_posts = @feeds.map do |feed|
+         feed.api_posts 
+end
+</code></pre>
+
+<p>AND MAGIC! The controller looks at the model Feed, which looks at the “type” of object and then looks inside that model to run the right “api_posts” code. Both tumblr ActiveRecord objects and Twitter ActiveRecord objects are returned, despite being called from totally distinct APIs.</p>
