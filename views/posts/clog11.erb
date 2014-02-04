@@ -18,7 +18,51 @@ date: 2014-01-26
 
 <p>Rather than writing a conditional in a Feed model to sort out what was being called, we simply wrote methods with identical names (self.client and api_posts) in two different models named TumblrFeed and TwitterFeed. We also created the Feed model, which has a database with the column “type,” and we have both classes inheriting from the Feed model (which is empty, actually, except for a validation). Check out the code below:</p>
 
-<pre><code>
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">TumblrFeed</span> <span style="color: #333333">&lt;</span> <span style="color: #003366; font-weight: bold">Feed</span>
+
+  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #BB0066; font-weight: bold">self</span><span style="color: #333333">.</span><span style="color: #0066BB; font-weight: bold">client</span>
+    <span style="color: #003366; font-weight: bold">Tumblr</span><span style="color: #333333">.</span>configure <span style="color: #008800; font-weight: bold">do</span> <span style="color: #333333">|</span>config<span style="color: #333333">|</span>
+      config<span style="color: #333333">.</span>consumer_key <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;TUMBLR_KEY&quot;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>consumer_secret <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;TUMBLR_SECRET&quot;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>oauth_token <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;TUMBLR_OAUTH_ACCESS_TOKEN&quot;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>oauth_token_secret <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;TUMBLR_OAUTH_SECRET_TOKEN&quot;</span><span style="color: #333333">]</span>
+    <span style="color: #008800; font-weight: bold">end</span>
+    client <span style="color: #333333">=</span> <span style="color: #AA6600">Tumblr</span>:<span style="color: #AA6600">:Client</span><span style="color: #333333">.</span>new
+  <span style="color: #008800; font-weight: bold">end</span>
+
+  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">api_posts</span>
+    <span style="color: #003366; font-weight: bold">TumblrFeed</span><span style="color: #333333">.</span>client<span style="color: #333333">.</span>posts(<span style="color: #007020">self</span><span style="color: #333333">.</span>uid)
+  <span style="color: #008800; font-weight: bold">end</span> 
+
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">TwitterFeed</span> <span style="color: #333333">&lt;</span> <span style="color: #003366; font-weight: bold">Feed</span>
+
+  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #BB0066; font-weight: bold">self</span><span style="color: #333333">.</span><span style="color: #0066BB; font-weight: bold">client</span>
+    <span style="color: #AA6600">Twitter</span>:<span style="color: #AA6600">:REST</span><span style="color: #333333">::</span><span style="color: #003366; font-weight: bold">Client</span><span style="color: #333333">.</span>new <span style="color: #008800; font-weight: bold">do</span> <span style="color: #333333">|</span>config<span style="color: #333333">|</span>
+      config<span style="color: #333333">.</span>consumer_key        <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;TWITTER_CONSUMER_KEY&quot;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>consumer_secret     <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;TWITTER_CONSUMER_SECRET&quot;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>access_token        <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;TWITTER_ACCESS_TOKEN&quot;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>access_token_secret <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;TWITTER_ACCESS_TOKEN_SECRET&quot;</span><span style="color: #333333">]</span>
+    <span style="color: #008800; font-weight: bold">end</span>
+  <span style="color: #008800; font-weight: bold">end</span>
+
+  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">api_posts</span>
+    <span style="color: #003366; font-weight: bold">TwitterFeed</span><span style="color: #333333">.</span>client<span style="color: #333333">.</span>user_timeline(<span style="color: #007020">self</span><span style="color: #333333">.</span>uid<span style="color: #333333">.</span>to_i)
+  <span style="color: #008800; font-weight: bold">end</span>
+<span style="color: #008800; font-weight: bold">end</span> 
+
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">Feed</span> <span style="color: #333333">&lt;</span> <span style="color: #AA6600">ActiveRecord</span>:<span style="color: #AA6600">:Base</span>
+  validates <span style="color: #AA6600">:type</span>, <span style="color: #AA6600">presence</span>: <span style="color: #003388; font-weight: bold">true</span>
+<span style="color: #008800; font-weight: bold">end</span> 
+
+<span style="color: #003366; font-weight: bold">Now</span>, I want my index to show all the feeds (both <span style="color: #003366; font-weight: bold">Tumblr</span> <span style="color: #000000; font-weight: bold">and</span> <span style="color: #003366; font-weight: bold">Twitter</span>)<span style="color: #333333">.</span> <span style="color: #003366; font-weight: bold">So</span> I simply write
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">index</span>
+    <span style="color: #3333BB">@all_the_posts</span> <span style="color: #333333">=</span> <span style="color: #3333BB">@feeds</span><span style="color: #333333">.</span>map <span style="color: #008800; font-weight: bold">do</span> <span style="color: #333333">|</span>feed<span style="color: #333333">|</span>
+         feed<span style="color: #333333">.</span>api_posts 
+<span style="color: #008800; font-weight: bold">end</span>
+</pre></div>
+
+<!-- <pre><code>
 class TumblrFeed < Feed
 
   def self.client
@@ -61,6 +105,6 @@ def index
     @all_the_posts = @feeds.map do |feed|
          feed.api_posts 
 end
-</code></pre>
+</code></pre> -->
 
 <p>AND MAGIC! The controller looks at the model Feed, which looks at the “type” of object and then looks inside that model to run the right “api_posts” code. Both tumblr ActiveRecord objects and Twitter ActiveRecord objects are returned, despite being called from totally distinct APIs.</p>

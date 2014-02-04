@@ -1,0 +1,66 @@
+date: 2014-01-26
+
+<p>
+  This week, I worked on an app that was styled with help from Bootstrap, "a sleek, intuitive, and powerful mobile first front-end framework for faster and easier web development.” 
+</p>
+
+<p>
+  Pros: It’s already kind of beautiful. Pick a theme, and you have your basics, including drop-down menus, links (that need some information to link correctly), and lots of those precious, rounded little corners.
+</p>
+
+<p>
+  Cons: If you want to change anything, you will spend one million hours being like “What is the name of this element? I can’t find it to call it! And when I think I’ve called it, my CSS does nothing because it is overridden by the gods of Bootstrap, and I am lost.”
+</p>
+
+<p>
+  So here’s a little step-by-step on getting the div you want, and then overriding any Bootstrap that is kicking down the flowers you are trying to plant outside of its garden. 
+</p>
+
+<p>
+  First, let’s take a look at the require tree in your application.css (location under assets —> stylesheets). At the top, you’ll see something that looks like this:
+</p>
+
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"> <span style="color: #333333">*=</span> require_self
+ <span style="color: #333333">*=</span> <span style="color: #007020">require</span> bootstrap
+ <span style="color: #333333">*=</span> require_tree <span style="color: #333333">.</span>
+</pre></div>
+
+<p>
+  This code indicates the order in which your code will be loaded and read. So, if you require bootstrap <em>after</em> your file, it will write over all your hard work. Think of it this way: if I assign two values to a single variable, one after another, the second wins, right?
+</p>
+
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">my_name<span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Blake the Great!&quot;</span>
+my_name <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Blake the Snake :(&quot;</span>
+</pre></div>
+
+<p>
+  This code will make my_name “Blake the Snake :(“. Unless I reverse the order, right? So that’s what we’re doing here.
+</p>
+
+<p>
+  Rather than require my application file below the bootstrap, I created a CSS file that was specifically intended to re-stylize a few things on my app, and named it “override_bootstrap”.
+</p> 
+
+<pre><code>touch app/assets/stylesheets/override_boostrap.css</code></pre>
+
+<p>
+  Then I placed it directly below the require bootstrap, like so:
+</p>
+
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"> <span style="color: #333333">*=</span> require_self
+ <span style="color: #333333">*=</span> <span style="color: #007020">require</span> bootstrap
+ <span style="color: #333333">*=</span> <span style="color: #007020">require</span> override_bootstrap
+ <span style="color: #333333">*=</span> require_tree <span style="color: #333333">.</span>
+</pre></div> 
+
+<p>
+  Once you do this, pop into your override_boostrap file and you can begin grabbing and styling to your heart’s content. There are a number of ways to hunt down what each div is named— I found that for me, I had the best luck just inspecting the element on the webpage. That might be best saved for another blog post— but I’ll give you a teaser:
+</p>
+
+<p>
+  Run your app with <code>rails s</code> (or whatever you’re using) and then find the element you want to style. For instance, the navigation bar. Right click on it and select “Inspect Element”. You should see a console-type window pop up below with some HTML inside. As you open those divs and run your cursor along them, you should see various elements of the page highlight, and from there you can see the name of each div. 
+</p>
+
+<p>
+  So there you have it. CSS is like a small child— it only remembers what it heard last. So be sure that your personal styling comes after Bootstrap, and you’re set. 
+</p>

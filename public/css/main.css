@@ -145,7 +145,8 @@ p.code {
   list-style-type: none;
 }
 
-.blog_text {
+/*body */.blog_text {
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
   margin: 0 50px 0 0;
 }
 
