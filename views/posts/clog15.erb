@@ -1,0 +1,76 @@
+date: 2014-02-23
+
+<h1>Foundation: A Rad New Framework</h1>
+
+<p>
+Magicians are cool because they do things we don’t understand. I feel this way about most front-end web designers. I browse the internet, and I think, “Look at all these sites with their nav bars that don’t have weird spacing issues, and these pictures that are all identically sized and shadowed, and these tables that don’t get horribly squished when I change my screen size to try to trick them. What sorcery is this??”
+</p>
+
+<p>
+So, I am still no magician, but I have learned a few card tricks from a newish framework called <a href="http://foundation.zurb.com/", class:"blog_link">Foundation</a>. I am going to tell you about it, so don’t read any further if you don’t want me to totally destroy magic for you.
+</p>
+
+<p>
+You have some options while using Foundation— the framework offers varying levels of complexity based on your needs/skills. If you’re just starting out, you can download an entire CSS base with which to tinker. Alternately, my colleague and I used the Foundation-rails gem to get going.
+</p> 
+
+<p>First, we added it to our gemfile:</p>
+
+<code>
+gem 'foundation-rails’
+</code>
+
+<p>Then we ran <code>bundle install</code>.</p>
+
+<p>
+  After that, we were all set to start tinkering. The simplest place to start might be with a Foundation template— under the drop down menu for “Developers,” select “Add-ons”, and you’ll land on a page with any number of templates that might interest you. Once you find one that suits your needs, you can click on “HTML” and copy and paste it directly into the css file that matches the page you’re working on. More features are browsable under “Docs”— check the side bar to look at each.
+</p>
+
+<p>
+For example, I was building a page for a garden app. This page allows users to check tools in and out, so I was seeking a friendly grid format. I navigated to Tables and copied the html into my tools folder as index.html. 
+</p>
+
+<p>
+Here’s the standard HTML: 
+</p>
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333333">&lt;</span>table<span style="color: #333333">&gt;</span>
+  <span style="color: #333333">&lt;</span>thead<span style="color: #333333">&gt;</span>
+    <span style="color: #333333">&lt;</span>tr<span style="color: #333333">&gt;</span>
+      <span style="color: #333333">&lt;</span>th width<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;200&quot;</span><span style="color: #333333">&gt;</span><span style="color: #003366; font-weight: bold">Table</span> <span style="color: #003366; font-weight: bold">Header</span><span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/th&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">      &lt;th&gt;Table Header&lt;/</span>th<span style="color: #333333">&gt;</span>
+      <span style="color: #333333">&lt;</span>th width<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;150&quot;</span><span style="color: #333333">&gt;</span><span style="color: #003366; font-weight: bold">Table</span> <span style="color: #003366; font-weight: bold">Header</span><span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/th&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">      &lt;th width=&quot;150&quot;&gt;Table Header&lt;/</span>th<span style="color: #333333">&gt;</span>
+    <span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/tr&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">  &lt;/</span>thead<span style="color: #333333">&gt;</span>
+  <span style="color: #333333">&lt;</span>tbody<span style="color: #333333">&gt;</span>
+    <span style="color: #333333">&lt;</span>tr<span style="color: #333333">&gt;</span>
+      <span style="color: #333333">&lt;</span>td<span style="color: #333333">&gt;</span><span style="color: #003366; font-weight: bold">Content</span> <span style="color: #003366; font-weight: bold">Goes</span> <span style="color: #003366; font-weight: bold">Here</span><span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/td&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">      &lt;td&gt;This is longer content Donec id elit non mi porta gravida at eget metus.&lt;/</span>td<span style="color: #333333">&gt;</span>
+      <span style="color: #333333">&lt;</span>td<span style="color: #333333">&gt;</span><span style="color: #003366; font-weight: bold">Content</span> <span style="color: #003366; font-weight: bold">Goes</span> <span style="color: #003366; font-weight: bold">Here</span><span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/td&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">      &lt;td&gt;Content Goes Here&lt;/</span>td<span style="color: #333333">&gt;</span>
+    <span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/tr&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">    &lt;tr&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">      &lt;td&gt;Content Goes Here&lt;/</span>td<span style="color: #333333">&gt;</span>
+      <span style="color: #333333">&lt;</span>td<span style="color: #333333">&gt;</span><span style="color: #003366; font-weight: bold">This</span> is longer <span style="color: #003366; font-weight: bold">Content</span> <span style="color: #003366; font-weight: bold">Goes</span> <span style="color: #003366; font-weight: bold">Here</span> <span style="color: #003366; font-weight: bold">Donec</span> <span style="color: #007020">id</span> elit non mi porta gravida at eget metus<span style="color: #333333">.</span>&lt;<span style="color: #000000; background-color: #fff0ff">/td&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">      &lt;td&gt;Content Goes Here&lt;/</span>td<span style="color: #333333">&gt;</span>
+      <span style="color: #333333">&lt;</span>td<span style="color: #333333">&gt;</span><span style="color: #003366; font-weight: bold">Content</span> <span style="color: #003366; font-weight: bold">Goes</span> <span style="color: #003366; font-weight: bold">Here</span><span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/td&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">    &lt;/</span>tr<span style="color: #333333">&gt;</span>
+    <span style="color: #333333">&lt;</span>tr<span style="color: #333333">&gt;</span>
+      <span style="color: #333333">&lt;</span>td<span style="color: #333333">&gt;</span><span style="color: #003366; font-weight: bold">Content</span> <span style="color: #003366; font-weight: bold">Goes</span> <span style="color: #003366; font-weight: bold">Here</span><span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/td&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">      &lt;td&gt;This is longer Content Goes Here Donec id elit non mi porta gravida at eget metus.&lt;/</span>td<span style="color: #333333">&gt;</span>
+      <span style="color: #333333">&lt;</span>td<span style="color: #333333">&gt;</span><span style="color: #003366; font-weight: bold">Content</span> <span style="color: #003366; font-weight: bold">Goes</span> <span style="color: #003366; font-weight: bold">Here</span><span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/td&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">      &lt;td&gt;Content Goes Here&lt;/</span>td<span style="color: #333333">&gt;</span>
+    <span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/tr&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">  &lt;/</span>tbody<span style="color: #333333">&gt;</span>
+<span style="color: #333333">&lt;</span><span style="color: #000000; background-color: #fff0ff">/table&gt;</span>
+</pre></div>
+
+
+<p>
+I simply replaced headings with the ones that I wanted, and BOOM. Toolbox.
+</p>
+
+<p>
+  This really scratches the surface of what Foundation can offer a web developer, and while they continue working out bugs, you'll find they are quick to respond to difficulties and are updating their github frequently (as in, today!). Check it out.
+</p>
