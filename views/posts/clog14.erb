@@ -1,0 +1,116 @@
+date: 2014-03-02
+
+<h2>Figaro, Figaro, FI-GA-ROH: Hiding All Your Secrets</h2>
+
+<p>
+  Your public Github repo is awesome because it allows others to view your code and submit pull requests to your code. Unfortunately, like all public spaces, Github can also be a place for the bad guys to come take your secret stuff. This could be any  number of things: your personal email, security keys, API keys, passwords . . . we use a number of these to get applications up and running, but that doesn’t mean we want them available to any ol’ schmo scoping our github. 
+</p>
+
+<p>
+  Figaro is a gem that provides a way of safeguarding your personal items. If github is the TSA agent, your suitcase is your app, and your secret keys are all your unmentionables just laid out in white on the screen. Figaro essentially compartmentalizes them so they remain within your app, but no one can see them. 
+</p>
+
+<p>
+  While Figaro has outstanding, simple, clear installation documentation https://github.com/laserlemon/figaro, I’d like to walk through a bit of the logic. I’ll go through using an example from a recent app I worked on that used Twitter Oauth. That meant I had several access keys and tokens floating about my application.
+</p>
+
+
+<h3>Step 1:</h3>
+
+<p>
+  Do not put your keys into your app and commit/push those UNTIL you have taken these steps installing Figaro. Otherwise, they’re up in Github regardless of later changes you make— should my warning come to you too late, you’ll want to delete your keys from whatever application you’re working with (in this case, Twitter), and generate new ones, lest someone hijack your keys.
+</p>
+
+<h3>Step 2: Install the gem. </h3>
+
+<p>In your Gemfile, add the Figaro gem:</p>
+
+<p><code>gem “figaro”</code></p>
+
+<p>Then, on the command line, install Figaro:</p>
+
+<p><code>rails generate figaro:install</code></p>
+
+<p>
+Note that simply running <code>bundle install</code> won’t be sufficient here, as we want Figaro to do a little work on installation, too. As you install Figaro, two things happen in the background:
+</p>
+
+<ol>
+     <li>A new file is created in your config directory <code>config/application.yml</code></li>
+     <li>That file, where you’ll store the secret keys, is listed in your <code>.gitignore</code> file.</li>
+</ol>
+
+<p>
+  The application.yml file is where we will store our secret keys in sets of key-value pairs. This is important because we will still need to call the keys in other files in our application— however, now we will do so by using the key in our code, which will call the value from the pair. 
+</p>
+
+<p>
+  The appropriately-named <code>.gitignore</code> file is where you’ll list any files that you don’t want pushed to git. You can play with this a little by listing a file in there and then making some changes to it. Now, when you run <code>git status</code> on your command line, that file should not show up as changed. It might even be worth testing now— make some notes in your application.yml file. Now check your status and confirm that your file is hidden. 
+</p>
+
+<p>
+  *On one occasion, the file listed in <code>.gitignore</code> required an additional backslash in front of the file name for it to be recognized. This isn’t the norm, though— but it’s something to try should your file should up in your status.
+</p>
+
+<h3>Step 3: List your secret keys in key-value pairs.</h3> 
+
+<p>Syntax is a little unique in this file. See below, where I show my file with secret keys:</p>
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+2
+3
+4</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #003366; font-weight: bold">TWITTER_CONSUMER_KEY</span>: nopeNotR3alButanEX
+<span style="color: #003366; font-weight: bold">TWITTER_CONSUMER_SECRET</span>: moreN0Tr3a7stuff
+<span style="color: #003366; font-weight: bold">TWITTER_ACCESS_TOKEN</span>: nUHUHucanthav3myK3Y
+<span style="color: #003366; font-weight: bold">TWITTER_ACCESS_TOKEN_SECRET</span>: <span style="color: #FF0000; background-color: #FFAAAA">‘</span><span style="color: #0000DD; font-weight: bold">4398887</span><span style="color: #FF0000; background-color: #FFAAAA">’</span>
+</pre></td></tr></table></div>
+
+<p>
+  Note that the last pair has the value in quotation marks. This is only required for keys that are integers. Rails knows that the others, having letters within them, are already strings, but you’ll need to identify the third as such. 
+</p>
+
+<h3>Step 4:</h3> 
+
+<p>
+  Call these keys in your application using ENV. Be sure to put quotation marks around the keys.
+</p> 
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></td><td><pre style="margin: 0; line-height: 125%"> <span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">TwitterFeed</span> <span style="color: #333333">&lt;</span> <span style="color: #003366; font-weight: bold">Feed</span>
+
+  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #BB0066; font-weight: bold">self</span><span style="color: #333333">.</span><span style="color: #0066BB; font-weight: bold">client</span>
+    <span style="color: #AA6600">Twitter</span>:<span style="color: #AA6600">:REST</span><span style="color: #333333">::</span><span style="color: #003366; font-weight: bold">Client</span><span style="color: #333333">.</span>new <span style="color: #008800; font-weight: bold">do</span> <span style="color: #333333">|</span>config<span style="color: #333333">|</span>
+      config<span style="color: #333333">.</span>consumer_key        <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="color: #FF0000; background-color: #FFAAAA">‘</span><span style="color: #003366; font-weight: bold">TWITTER_CONSUMER_KEY</span><span style="background-color: #fff0f0">&#39;]</span>
+<span style="background-color: #fff0f0">      config.consumer_secret     = ENV[‘TWITTER_CONSUMER_SECRET&#39;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>access_token        <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="color: #FF0000; background-color: #FFAAAA">‘</span><span style="color: #003366; font-weight: bold">TWITTER_ACCESS_TOKEN</span><span style="background-color: #fff0f0">&#39;]</span>
+<span style="background-color: #fff0f0">      config.access_token_secret = ENV[‘TWITTER_ACCESS_TOKEN_SECRET&#39;</span><span style="color: #333333">]</span>
+    <span style="color: #008800; font-weight: bold">end</span>
+  <span style="color: #008800; font-weight: bold">end</span>
+</pre></td></tr></table></div>
+</div>
+
+<h3>Step 5: Pushing to Heroku</h3>
+
+<p>
+  This is my favorite part of Figaro. If you’re accustomed to using another system for key-hiding, you know that normally you have to individually set each variable within Heroku by running 
+</p>
+
+<p><code>heroku config:add TWITTER_CONSUMER_KEY=nopeNotR3alButanEX</code>. </p>
+
+<p>But with Figaro, you simply need to run</p>
+
+<p><code>rake figaro:heroku</code></p>
+
+<p>Which will export all the keys straight to Heroku. </p>
+ 
+<p>
+  Should you later add more keys for extra authorization or API calls, you simply add those to the same <code>application.yml</code>.  
+</p>

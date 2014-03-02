@@ -5,7 +5,11 @@ body {
   background-color: #f7f3e1;
 }
 
-.blog_link a {
+code {
+  background-color: white;
+}
+
+.blog_link {
   color: red;
   text-decoration:underline;
 }
