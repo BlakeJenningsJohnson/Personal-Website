@@ -1,6 +1,6 @@
 date: 2014-03-02
 
-<h2>Figaro, Figaro, FI-GA-ROH: Hiding All Your Secrets</h2>
+<h1>Figaro, Figaro, FI-GA-ROH: Hiding All Your Secrets</h1>
 
 <p>
   Your public Github repo is awesome because it allows others to view your code and submit pull requests to your code. Unfortunately, like all public spaces, Github can also be a place for the bad guys to come take your secret stuff. This could be any  number of things: your personal email, security keys, API keys, passwords . . . we use a number of these to get applications up and running, but that doesn’t mean we want them available to any ol’ schmo scoping our github. 
@@ -11,7 +11,7 @@ date: 2014-03-02
 </p>
 
 <p>
-  While Figaro has outstanding, simple, clear installation documentation https://github.com/laserlemon/figaro, I’d like to walk through a bit of the logic. I’ll go through using an example from a recent app I worked on that used Twitter Oauth. That meant I had several access keys and tokens floating about my application.
+  While Figaro has outstanding, simple, clear installation <a href='https://github.com/laserlemon/figaro'>documentation</a href>, I’d like to walk through a bit of the logic. I’ll go through using an example from a recent app I worked on that used Twitter Oauth. That meant I had several access keys and tokens floating about my application.
 </p>
 
 
@@ -36,8 +36,8 @@ Note that simply running <code>bundle install</code> won’t be sufficient here,
 </p>
 
 <ol>
-     <li>A new file is created in your config directory <code>config/application.yml</code></li>
-     <li>That file, where you’ll store the secret keys, is listed in your <code>.gitignore</code> file.</li>
+ <li>A new file is created in your config directory <code>config/application.yml</code></li>
+ <li>That file, where you’ll store the secret keys, is listed in your <code>.gitignore</code> file.</li>
 </ol>
 
 <p>
@@ -62,7 +62,7 @@ Note that simply running <code>bundle install</code> won’t be sufficient here,
 4</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #003366; font-weight: bold">TWITTER_CONSUMER_KEY</span>: nopeNotR3alButanEX
 <span style="color: #003366; font-weight: bold">TWITTER_CONSUMER_SECRET</span>: moreN0Tr3a7stuff
 <span style="color: #003366; font-weight: bold">TWITTER_ACCESS_TOKEN</span>: nUHUHucanthav3myK3Y
-<span style="color: #003366; font-weight: bold">TWITTER_ACCESS_TOKEN_SECRET</span>: <span style="color: #FF0000; background-color: #FFAAAA">‘</span><span style="color: #0000DD; font-weight: bold">4398887</span><span style="color: #FF0000; background-color: #FFAAAA">’</span>
+<span style="color: #003366; font-weight: bold">TWITTER_ACCESS_TOKEN_SECRET</span>: <span style="color: #FF0000; background-color: #FFAAAA"></span><span style="color: #0000DD; font-weight: bold">'4398887'</span><span style="color: #FF0000; background-color: #FFAAAA"></span>
 </pre></td></tr></table></div>
 
 <p>
@@ -88,10 +88,10 @@ Note that simply running <code>bundle install</code> won’t be sufficient here,
 
   <span style="color: #008800; font-weight: bold">def</span> <span style="color: #BB0066; font-weight: bold">self</span><span style="color: #333333">.</span><span style="color: #0066BB; font-weight: bold">client</span>
     <span style="color: #AA6600">Twitter</span>:<span style="color: #AA6600">:REST</span><span style="color: #333333">::</span><span style="color: #003366; font-weight: bold">Client</span><span style="color: #333333">.</span>new <span style="color: #008800; font-weight: bold">do</span> <span style="color: #333333">|</span>config<span style="color: #333333">|</span>
-      config<span style="color: #333333">.</span>consumer_key        <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="color: #FF0000; background-color: #FFAAAA">‘</span><span style="color: #003366; font-weight: bold">TWITTER_CONSUMER_KEY</span><span style="background-color: #fff0f0">&#39;]</span>
-<span style="background-color: #fff0f0">      config.consumer_secret     = ENV[‘TWITTER_CONSUMER_SECRET&#39;</span><span style="color: #333333">]</span>
-      config<span style="color: #333333">.</span>access_token        <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="color: #FF0000; background-color: #FFAAAA">‘</span><span style="color: #003366; font-weight: bold">TWITTER_ACCESS_TOKEN</span><span style="background-color: #fff0f0">&#39;]</span>
-<span style="background-color: #fff0f0">      config.access_token_secret = ENV[‘TWITTER_ACCESS_TOKEN_SECRET&#39;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>consumer_key        <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="color: #FF0000; background-color: #FFAAAA"></span><span style="color: #003366; font-weight: bold">'TWITTER_CONSUMER_KEY</span><span style="background-color: #fff0f0">&#39;]</span>
+<span style="background-color: #fff0f0">      config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET&#39;</span><span style="color: #333333">]</span>
+      config<span style="color: #333333">.</span>access_token        <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="color: #FF0000; background-color: #FFAAAA"></span><span style="color: #003366; font-weight: bold">'TWITTER_ACCESS_TOKEN</span><span style="background-color: #fff0f0">&#39;]</span>
+<span style="background-color: #fff0f0">      config.access_token_secret = ENV['TWITTER_ACCESS_TOKEN_SECRET&#39;</span><span style="color: #333333">]</span>
     <span style="color: #008800; font-weight: bold">end</span>
   <span style="color: #008800; font-weight: bold">end</span>
 </pre></td></tr></table></div>
