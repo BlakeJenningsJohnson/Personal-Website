@@ -1,0 +1,81 @@
+date: 2014-03-22
+
+<p>You want to sort items into a list? Maybe you want to sort multiple things into multiple lists? And then move items between lists? This probably means you struggle with making decisions. It also means you will need to create two sortable lists with JQuery, like I did. </p>
+
+<p>I’m trying to create a simple survey that asks users to sort a bank of words into several boxes, and then prioritize those words within each box. This would have been a useful tool back when I was teaching— it could allow students to consider what words they relate to different characters, or to organize thoughts for an essay. </p>
+
+<p>I used Jquery for the mechanics, because it already has this exact logic in place. </p>
+
+<p>Here’s a little step-by-step:</p>
+
+<p>In order to create the drag-and-drop, we need to include several Jquery libraries in our HTML:</p>
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+2</pre></td><td><pre style="margin: 0; line-height: 125%">    <span style="color: #333333">&lt;</span>script src<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;https://code.jquery.com/jquery-1.9.1.js&quot;</span><span style="color: #333333">&gt;&lt;</span><span style="color: #000000; background-color: #fff0ff">/script&gt;</span>
+<span style="color: #000000; background-color: #fff0ff">    &lt;script src=&quot;https:/</span><span style="color: #333333">/</span>code<span style="color: #333333">.</span>jquery<span style="color: #333333">.</span>com<span style="color: #333333">/</span>ui<span style="color: #333333">/</span><span style="color: #0000DD; font-weight: bold">1</span><span style="color: #333333">.</span><span style="color: #0000DD; font-weight: bold">10</span><span style="color: #333333">.</span><span style="color: #0000DD; font-weight: bold">4</span><span style="color: #333333">/</span>jquery<span style="color: #333333">-</span>ui<span style="color: #333333">.</span>js<span style="background-color: #fff0f0">&quot;&gt;&lt;/script&gt;</span>
+</pre></td></tr></table></div>
+
+
+<p>After that, we need to create the primary HTML page with the movable content. Pay close attention to div names in this circumstance, since we’ll be using them in order to drag and drop items. For my sanity, I chose div classes that directly tied to the mechanism I wanted performed on them. So, I named all the words I wanted to drag “draggit” and the boxes I wanted to sort them in “sortme.”  I also assigned separate IDs to help me perform some item-specific logic later.</p>
+
+<p>We begin with the $ that indicates we’re implementing an action, or function. We’ll leave the function empty since we aren’t taking in anything.  </p>
+
+<code>$(function () {</code>
+
+<p>On the next line, we’ll grab the div wrapping the object that we want to drag into the box. Then, we’ll tell it to be draggable by adding the method “.draggable.” It’s seriously that easy. Those steps should make the items draggable— but to where shall we drag them? The JQuery method draggable takes an argument as a hash, so we’ll use that to define what we want to connect with— with the “connectWith” key. Again, it’s that easy. So here’s where we are now:</p>
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+2
+3</pre></td><td><pre style="margin: 0; line-height: 125%">$(<span style="color: #008800; font-weight: bold">function</span> () {
+  $(<span style="background-color: #fff0f0">&quot;.draggit&quot;</span>).draggable({ connectWith<span style="color: #333333">:</span> <span style="background-color: #fff0f0">&quot;.sortme&quot;</span> }); 
+)};
+</pre></td></tr></table></div>
+
+
+<p>Now we need to define the area where we want to drag the items to sort and drop them. Wait for it . . . We’re going to grab that div and then make it “sortable” and “droppable.” Amazing:</p>
+
+<code>$(".sortme").sortable().droppable()</code>
+
+<p>This will effectively allow us to drag and drop items into the sortable, droppable area. However, droppable does take some optional arguments that allow us to define effects or other logic. I have included an example of that code below, but we don’t need it unless we want to assign other logic later:</p>
+
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+2
+3
+4
+5
+6
+7</pre></td><td><pre style="margin: 0; line-height: 125%">  $(<span style="background-color: #fff0f0">&quot;.sortme&quot;</span>).sortable().droppable({
+    accept<span style="color: #333333">:</span> <span style="background-color: #fff0f0">&quot;.word&quot;</span>,
+    activeClass<span style="color: #333333">:</span> <span style="background-color: #fff0f0">&quot;highlight&quot;</span>, <span style="color: #888888">/*need to define highlight for it to work*/</span>
+    drop<span style="color: #333333">:</span> <span style="color: #008800; font-weight: bold">function</span>( event, ui ) {
+      <span style="color: #008800; font-weight: bold">var</span> li <span style="color: #333333">=</span> $(<span style="background-color: #fff0f0">&#39;&lt;div id=&#39;</span> <span style="color: #333333">+</span> ui.draggable.attr(<span style="background-color: #fff0f0">&#39;id&#39;</span>) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&#39;&gt;&#39;</span>).html(ui.draggable.html());
+      li.appendTo(<span style="color: #008800; font-weight: bold">this</span>);
+      ui.draggable.remove();
+</pre></td></tr></table></div>
+
+ 
+<p>But then two things happened:</p>
+
+<ol>
+  <li>
+    I wanted the option to be able to moves words across boxes, so I had to ultimately change my code a bit, still using the <code> connectWith </code>  method. 
+  </li>
+  <li>
+    I realized I wanted everything connected to everything (area outside of the boxes included), so I added the “.sortme” class to all parts of the code. This means that when I use <code> connectWith </code>, I’m actually just connecting everything to everything, and allowing some components to be droppable. 
+  </li>
+</ol>
+
+<p> This also allowed me to do some refactoring:</p>
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+2
+3
+4</pre></td><td><pre style="margin: 0; line-height: 125%">$(<span style="color: #008800; font-weight: bold">function</span> () {
+  $(<span style="background-color: #fff0f0">&quot;.sortme&quot;</span>).sortable({ connectWith<span style="color: #333333">:</span> <span style="background-color: #fff0f0">&quot;.sortme&quot;</span> }).droppable({
+  });
+});
+</pre></td></tr></table></div>
+
+
+<p>Hopefully walking through the process clarified a few things. </p>
