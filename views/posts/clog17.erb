@@ -1,0 +1,108 @@
+date: 2014-03-30
+
+<h1>PostgreSQL</h1>
+
+<p>First thing’s first: As I understand it, it’s pronounced “Post-gress-Q-L”. </p>
+
+<p>It’s supposed to be pretty robust, powerful, and nearly old-school in the sense that it has been up and running, tried and true, since at the earliest 1995, but arguably since the seventies.Wow.</p>
+
+<p>PostgresQL is a relational database management system (RDBMS), which means that it uses a math-based system of organizing data with rows and columns in multiple dimensions. The SQL stands for “Structured Query Language,” which allows for a complex (simple, in practice) way of searching for and returning data based on various parameters. Stored in a variety of forms, this data can be regenerated into new tables by defining relationships across tables. </p>
+
+<p>PostgresQL (among a few other SQL databases), from what I can tell, is a pretty popular choice over other options. It offers many advantages— it’s well-tested, and it’s clear schemas allow for querying in a number of ways. If a key-value store is something like a filing cabinet, PostgreSQL is like a wheel, or even a globe, where you can access various data from all sides, rather than just one.
+</p>
+
+<p>An important point about relational databases, as opposed to key-value stores, is that in order to have organized data, one has to create an organized system by which to store it. This sounds logical, but as you’ll see in my next blog post on Key-Value stores, is not standard.  This advance organization basically means that you can’t just shove data into the database like it’s a big box. Instead, you have to consider what data you want to store, and how you want to do it. What  are the data’s key attributes? How do you want to record them? For instance, say you are storing data about shops in a mall. Before you start saving things into the database, you’ll need to create a sorted plaec to store it in. In PostgreSQL, that is called “defining a schema,” and it looks like this:</p>
+
+<p><pre><code>
+  CREATE TABLE shops (
+  shop_name text PRIMARY KEY, 
+  opens timestamp, 
+  closes timestamp, 
+  mall varchar(50), 
+  location char(2));
+</code></pre></p>
+
+<p>Broken down:</p>
+
+<p><code>CREATE TABLE</code> is the command to generate a table to store these values. It’s essentially drawing and defining the columns where we’ll write in data. The caps are optional.</p>
+
+<p><code>shops</code> titles the table</p>
+
+<p><code> ( </code> the open parentheses shows that we are defining the attributes </p>
+
+<p><code> shop_name </code>is the first attribute by which we’ll store info on the shop</p>
+
+<code> text </code>communicates that the name of the shop will come in the form of text, or a string, potentially a little long 
+
+<p><code>PRIMARY KEY</code> defines the shop_name as the main column by which we’ll define and search. 
+</p>
+
+<p>The following attributes are similarly defined— the first word is the attribute (or quality), the second describes the form in which it will come in. There are a number of these — <code>varchar(some number)</code> will determine the length of a string to be variable up to ‘some number’ of characters, while <code>char(some num)</code> will limit the length of a string to ‘some num’ number. </p>
+ 
+<p>and the <code> ); </code>tells PostgreSQL we’re done with our bossing and it should get to work creating a table. </p>
+
+<p>All this is essentially defining our system. It’s deciding which dresser we’ll put our clothes in, and that the top drawer will be for socks and it’s  shallow drawer so you can’t put sweaters in it, etc. Or labeling folders and their folders and picking what color folder goes with what kind of information. These choices allow us quick access to the thing we want, when we want it. </p>
+
+<p>So let’s put some stuff in our table. We’ll use similar syntax, leading with the command, following with the table name, then defining what columns we’ll be inserting our values into (“this thing is going to be a sock so you know what drawer to put it in”), before finally providing the values themselves: </p>
+
+<pre><code>
+  INSERT INTO shops (shop_name, opens, closes, mall, location)
+  VALUES (‘Macy’s’, ‘9:00:00', ’18:30:00’, ‘Northgate’, ‘A4’);
+</code></pre>
+
+<p>Notice that the strings are in <em>single quotes</em> and time is military. If we want to take a look at this table and all of its data, we’ll write this command:</p>
+
+<p><code>SELECT * FROM shops;</code></p>
+
+<p>The <code>SELECT</code> tells PostgreSQL to reach into its store and grab something. The <code> * </code> after it is the splat, which essentially says “take everything.” If we had instead written <code> SELECT shop_name </code>, then it would have only grabbed those. Instead, it will return everything inside the table <code>shops</code>, which is right now pretty much just the insertion above, except in a table with headings and a single row.</p>
+
+<p>We didn’t have to insert all the values— but we do need to put in the values that we tell it to expect, or, should we be missing one (such as ‘location’,) we do need to enter null:</p>
+
+<p><pre><code>INSERT INTO shops (shop_name, opens, closes, mall)
+VALUES (‘Macy’s’, ‘9:00:00', ’18:30:00’, ‘Northgate’); </code></pre></p>
+
+<p>or</p>
+
+<p><pre><code>
+INSERT INTO shops (shop_name, opens, closes, mall, location)
+VALUES (‘Macy’s’, ‘9:00:00', ’18:30:00’, ‘Northgate’, null); 
+</code></pre></p>
+
+<p>Postgres starts to get cool when you decide you want another table that can piggyback on this table. For example, maybe we also want a list of employees within those shops: </p>
+
+<p><pre><code>
+CREATE TABLE employees (
+employee_id SERIAL PRIMARY KEY,
+name varchar(35),
+mall varchar(50),
+shop_name text,
+FOREIGN KEY (mall, shop_name)
+REFERENCES shops (mall, shop_name);
+</code></pre></p>
+
+<p>A couple unique things to point out about the above command is that we have created an employee_id which increments ‘serially’. We have also defined a <code>FOREIGN KEY<code> which will be keys by which we connect to the shops table, which is what it<code>REFERENCES</code>. </p>
+
+<p>Now we can add an employee or two:</p>
+
+<p><pre><code>
+INSERT INTO employees (name, mall, shop_name)
+VALUES (‘Ann Jacobs’, ’Northgate’, ‘Macy’s’), 
+(‘John Richards’, ‘Alderwood’, ‘Ulta’), 
+(‘Becca Todd’, ‘Northgate’, ‘Ulta’);
+</code></pre></p>
+
+<p>Now we can find specific employees at either the mall or the shop with an <code>INNER JOIN</code> command:</p>
+
+<p><pre><code>
+SELECT employees.*, location FROM employees INNER JOIN shops
+ON employees.mall = shop.mall;
+</code></pre></p>
+
+<p>This will give us the employee info and locations of both Ann and Becca. But maybe we just want Ann?</p>
+
+<p><pre><code>
+SELECT employees.*, location FROM employees INNER JOIN shops
+ON employees.mall = shop.mall AND employees.shop_name = shop.shop_name;
+</code></pre></p>
+
+<p>This is only a beginning look at queries and data creation in PostgreSQL. But it should allow you some glimpse at the way PostgreSQL functions in multiple dimensions, and also some sense of the syntax of the queries and commands. </p>
