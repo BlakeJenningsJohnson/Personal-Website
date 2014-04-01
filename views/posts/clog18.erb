@@ -1,253 +1,108 @@
 date: 2014-03-31
 
-<h1>Green, Refactor, Green, Refactor</h1>
+<h1>PostgreSQL</h1>
 
-<p>
-I recently did a small interview with a company with whom I would be lucky to intern, and they asked to see some code of which I was proud. While I have some more complete, polished-looking apps, I chose to show them a piece of a small service app I did with Davida Marion that executes API calls because it demonstrated the value of testing, challenged that "there's more than one way to do it," and showcased some serious refactoring.
+<p>First thing’s first: As I understand it, it’s pronounced “Post-gress-Q-L”. </p>
+
+<p>It’s supposed to be pretty robust, powerful, and nearly old-school in the sense that it has been up and running, tried and true, since at the earliest 1995, but arguably since the seventies.Wow.</p>
+
+<p>PostgresQL is a relational database management system (RDBMS), which means that it uses a math-based system of organizing data with rows and columns in multiple dimensions. The SQL stands for “Structured Query Language,” which allows for a complex (simple, in practice) way of searching for and returning data based on various parameters. Stored in a variety of forms, this data can be regenerated into new tables by defining relationships across tables. </p>
+
+<p>PostgresQL (among a few other SQL databases), from what I can tell, is a pretty popular choice over other options. It offers many advantages— it’s well-tested, and it’s clear schemas allow for querying in a number of ways. If a key-value store is something like a filing cabinet, PostgreSQL is like a wheel, or even a globe, where you can access various data from all sides, rather than just one.
 </p>
 
-<p>
-The service makes API calls to determine shipping rates, and then saves the transaction. We knew we had to save the request and the response, so we created two models accordingly, and a requests controller to parse incoming data to make the request. As our first effort at building an API, we were pretty psyched when it worked.
+<p>An important point about relational databases, as opposed to key-value stores, is that in order to have organized data, one has to create an organized system by which to store it. This sounds logical, but as you’ll see in my next blog post on Key-Value stores, is not standard.  This advance organization basically means that you can’t just shove data into the database like it’s a big box. Instead, you have to consider what data you want to store, and how you want to do it. What  are the data’s key attributes? How do you want to record them? For instance, say you are storing data about shops in a mall. Before you start saving things into the database, you’ll need to create a sorted plaec to store it in. In PostgreSQL, that is called “defining a schema,” and it looks like this:</p>
+
+<p><pre><code>
+  CREATE TABLE shops (
+  shop_name text PRIMARY KEY, 
+  opens timestamp, 
+  closes timestamp, 
+  mall varchar(50), 
+  location char(2));
+</code></pre></p>
+
+<p>Broken down:</p>
+
+<p><code>CREATE TABLE</code> is the command to generate a table to store these values. It’s essentially drawing and defining the columns where we’ll write in data. The caps are optional.</p>
+
+<p><code>shops</code> titles the table</p>
+
+<p><code> ( </code> the open parentheses shows that we are defining the attributes </p>
+
+<p><code> shop_name </code>is the first attribute by which we’ll store info on the shop</p>
+
+<code> text </code>communicates that the name of the shop will come in the form of text, or a string, potentially a little long 
+
+<p><code>PRIMARY KEY</code> defines the shop_name as the main column by which we’ll define and search. 
 </p>
 
-<p>
-But if we hit green, why keep going?
-</p>
+<p>The following attributes are similarly defined— the first word is the attribute (or quality), the second describes the form in which it will come in. There are a number of these — <code>varchar(some number)</code> will determine the length of a string to be variable up to ‘some number’ of characters, while <code>char(some num)</code> will limit the length of a string to ‘some num’ number. </p>
+ 
+<p>and the <code> ); </code>tells PostgreSQL we’re done with our bossing and it should get to work creating a table. </p>
 
-<p>
-At this juncture, we decided we would benefit from writing some tests. As my interviewer pointed out, best practice would ordinarily be to write the tests first, but we were still trying to understand what we were doing, so we figured we'd learn to write the tests after. THIS is where things got interesting, because it turns out, it's hard to write tests for complex code. Here is what our initial <code>Request.rb</code> looked like: 
-</p>
+<p>All this is essentially defining our system. It’s deciding which dresser we’ll put our clothes in, and that the top drawer will be for socks and it’s  shallow drawer so you can’t put sweaters in it, etc. Or labeling folders and their folders and picking what color folder goes with what kind of information. These choices allow us quick access to the thing we want, when we want it. </p>
 
-<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">Request</span> <span style="color: #333333">&lt;</span> <span style="color: #AA6600">ActiveRecord</span>:<span style="color: #AA6600">:Base</span> 
-  <span style="color: #003388; font-weight: bold">include</span> <span style="color: #AA6600">ActiveMerchant</span>:<span style="color: #AA6600">:Shipping</span>
+<p>So let’s put some stuff in our table. We’ll use similar syntax, leading with the command, following with the table name, then defining what columns we’ll be inserting our values into (“this thing is going to be a sock so you know what drawer to put it in”), before finally providing the values themselves: </p>
 
-  <span style="color: #003388; font-weight: bold">attr_reader</span> <span style="color: #AA6600">:origin</span>, <span style="color: #AA6600">:package</span>, <span style="color: #AA6600">:destination</span>
+<pre><code>
+  INSERT INTO shops (shop_name, opens, closes, mall, location)
+  VALUES (‘Macy’s’, ‘9:00:00', ’18:30:00’, ‘Northgate’, ‘A4’);
+</code></pre>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #BB0066; font-weight: bold">self</span><span style="color: #333333">.</span><span style="color: #0066BB; font-weight: bold">make_api_call</span>(<span style="color: #333333">*</span>args)
-    current_request <span style="color: #333333">=</span> parse_request_parameters(<span style="color: #333333">*</span>args)
-    ups<span style="color: #333333">.</span>find_rates(<span style="color: #3333BB">@origin</span>, <span style="color: #3333BB">@destination</span>, <span style="color: #3333BB">@package</span>)
+<p>Notice that the strings are in <em>single quotes</em> and time is military. If we want to take a look at this table and all of its data, we’ll write this command:</p>
 
-    <span style="color: #888888"># fedex.find_rates . . .</span>
-  <span style="color: #008800; font-weight: bold">end</span>
+<p><code>SELECT * FROM shops;</code></p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #BB0066; font-weight: bold">self</span><span style="color: #333333">.</span><span style="color: #0066BB; font-weight: bold">parse_request_parameters</span>(
-                                origin_city, origin_country, origin_state, origin_zip,
-                                destination_country, destination_city, destination_state, destination_zip,
-                                package_weight, package_height, package_depth, package_length
-                                )
-      current_request <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>new <span style="color: #888888">#self is optional here</span>
-      current_request<span style="color: #333333">.</span>set_origin(origin_country, origin_state, origin_city, origin_zip)
-      current_request<span style="color: #333333">.</span>set_destination(destination_country, destination_state, destination_city, destination_zip)
-      current_request<span style="color: #333333">.</span>set_package(package_weight<span style="color: #333333">.</span>to_i, <span style="color: #333333">[</span>package_height<span style="color: #333333">.</span>to_f, package_depth<span style="color: #333333">.</span>to_f, package_length<span style="color: #333333">.</span>to_f<span style="color: #333333">]</span>)
-      current_request
-  <span style="color: #008800; font-weight: bold">end</span>
+<p>The <code>SELECT</code> tells PostgreSQL to reach into its store and grab something. The <code> * </code> after it is the splat, which essentially says “take everything.” If we had instead written <code> SELECT shop_name </code>, then it would have only grabbed those. Instead, it will return everything inside the table <code>shops</code>, which is right now pretty much just the insertion above, except in a table with headings and a single row.</p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">set_origin</span>(origin_country, origin_state, origin_city, origin_zip)
-    <span style="color: #3333BB">@origin</span> <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">Location</span><span style="color: #333333">.</span>new(<span style="color: #AA6600">country</span>: origin_country, 
-                             <span style="color: #AA6600">state</span>: origin_state, 
-                              <span style="color: #AA6600">city</span>: origin_city, 
-                               <span style="color: #AA6600">zip</span>: origin_zip)
-  <span style="color: #008800; font-weight: bold">end</span>
+<p>We didn’t have to insert all the values— but we do need to put in the values that we tell it to expect, or, should we be missing one (such as ‘location’,) we do need to enter null:</p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">set_package</span>(package_weight, package_dimensions)
-    <span style="color: #3333BB">@package</span> <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">Package</span><span style="color: #333333">.</span>new(package_weight, package_dimensions) <span style="color: #888888">#this is in grams and LxWxD</span>
-  <span style="color: #008800; font-weight: bold">end</span>
+<p><pre><code>INSERT INTO shops (shop_name, opens, closes, mall)
+VALUES (‘Macy’s’, ‘9:00:00', ’18:30:00’, ‘Northgate’); </code></pre></p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">set_destination</span>(destination_country, destination_city, destination_state, destination_zip)
-    <span style="color: #3333BB">@destination</span> <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">Location</span><span style="color: #333333">.</span>new(<span style="color: #AA6600">country</span>: destination_country, 
-                                  <span style="color: #AA6600">state</span>: destination_state, 
-                                   <span style="color: #AA6600">city</span>: destination_city, 
-                                    <span style="color: #AA6600">zip</span>: destination_zip)
-  <span style="color: #008800; font-weight: bold">end</span>
+<p>or</p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #BB0066; font-weight: bold">self</span><span style="color: #333333">.</span><span style="color: #0066BB; font-weight: bold">ups</span>
-    ups <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">UPS</span><span style="color: #333333">.</span>new(<span style="color: #AA6600">login</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;UPS_LOGIN&#39;</span><span style="color: #333333">]</span>, 
-                  <span style="color: #AA6600">password</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;UPS_PASSWORD&#39;</span><span style="color: #333333">]</span>,
-                  <span style="color: #AA6600">key</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;UPS_KEY&#39;</span><span style="color: #333333">]</span>)
-  <span style="color: #008800; font-weight: bold">end</span>
-<span style="color: #008800; font-weight: bold">end</span>
-</pre></td></tr></table></div>
+<p><pre><code>
+INSERT INTO shops (shop_name, opens, closes, mall, location)
+VALUES (‘Macy’s’, ‘9:00:00', ’18:30:00’, ‘Northgate’, null); 
+</code></pre></p>
 
-<p>
-Ignoring the bizarre upside-down pyramids that try fruitlessly to organize keys and values, this code is fine. It works-- and you'll note that make_api_call would ultimately also include an api request for fed_ex, so that's one smell. But as we tried to test that method, we realized we couldn't individually parse out and test the little calls inside it. And then we thought, why are we even trying to make the API call here? The request is the data, not the call . . . We noticed the <code>current_request.set . . .</code> methods stacked on each other as well, which meant testing that method would only test an end result. So we refactored. Here is the end result:
-</p>
+<p>Postgres starts to get cool when you decide you want another table that can piggyback on this table. For example, maybe we also want a list of employees within those shops: </p>
 
-<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">RateGetter</span>
-  <span style="color: #003388; font-weight: bold">include</span> <span style="color: #AA6600">ActiveMerchant</span>:<span style="color: #AA6600">:Shipping</span>
+<p><pre><code>
+CREATE TABLE employees (
+employee_id SERIAL PRIMARY KEY,
+name varchar(35),
+mall varchar(50),
+shop_name text,
+FOREIGN KEY (mall, shop_name)
+REFERENCES shops (mall, shop_name);
+</code></pre></p>
 
-  <span style="color: #003388; font-weight: bold">attr_reader</span> <span style="color: #AA6600">:origin</span>, <span style="color: #AA6600">:package</span>, <span style="color: #AA6600">:destination</span>
-  <span style="color: #003388; font-weight: bold">attr_accessor</span> <span style="color: #AA6600">:params_hash</span>, <span style="color: #AA6600">:carrier</span>
+<p>A couple unique things to point out about the above command is that we have created an employee_id which increments ‘serially’. We have also defined a <code>FOREIGN KEY<code> which will be keys by which we connect to the shops table, which is what it<code>REFERENCES</code>. </p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">initialize</span>(params_hash, carrier)
-    <span style="color: #3333BB">@params_hash</span> <span style="color: #333333">=</span> params_hash
-    <span style="color: #3333BB">@carrier</span> <span style="color: #333333">=</span> carrier
-  <span style="color: #008800; font-weight: bold">end</span>
+<p>Now we can add an employee or two:</p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">origin</span>
-    <span style="color: #003366; font-weight: bold">Location</span><span style="color: #333333">.</span>new(params_hash<span style="color: #333333">[</span><span style="color: #AA6600">:origin</span><span style="color: #333333">]</span>)
-  <span style="color: #008800; font-weight: bold">end</span>
+<p><pre><code>
+INSERT INTO employees (name, mall, shop_name)
+VALUES (‘Ann Jacobs’, ’Northgate’, ‘Macy’s’), 
+(‘John Richards’, ‘Alderwood’, ‘Ulta’), 
+(‘Becca Todd’, ‘Northgate’, ‘Ulta’);
+</code></pre></p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">destination</span>
-    <span style="color: #003366; font-weight: bold">Location</span><span style="color: #333333">.</span>new(params_hash<span style="color: #333333">[</span><span style="color: #AA6600">:destination</span><span style="color: #333333">]</span>)
-  <span style="color: #008800; font-weight: bold">end</span>
+<p>Now we can find specific employees at either the mall or the shop with an <code>INNER JOIN</code> command:</p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">package</span>
-    <span style="color: #003366; font-weight: bold">Package</span><span style="color: #333333">.</span>new(
-      params_hash<span style="color: #333333">[</span><span style="color: #AA6600">:package</span><span style="color: #333333">][</span><span style="color: #AA6600">:weight</span><span style="color: #333333">].</span>to_i,
-      params_hash<span style="color: #333333">[</span><span style="color: #AA6600">:package</span><span style="color: #333333">][</span><span style="color: #AA6600">:dimensions</span><span style="color: #333333">].</span>map { <span style="color: #333333">|</span>dimension<span style="color: #333333">|</span> dimension<span style="color: #333333">.</span>to_i }
-    )
-  <span style="color: #008800; font-weight: bold">end</span>
+<p><pre><code>
+SELECT employees.*, location FROM employees INNER JOIN shops
+ON employees.mall = shop.mall;
+</code></pre></p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">client</span>
-    <span style="color: #007020">self</span><span style="color: #333333">.</span>send(carrier<span style="color: #333333">.</span>to_sym)
-  <span style="color: #008800; font-weight: bold">end</span>
+<p>This will give us the employee info and locations of both Ann and Becca. But maybe we just want Ann?</p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">returned_rates</span>
-    client<span style="color: #333333">.</span>find_rates(origin, destination, package)<span style="color: #333333">.</span>rates
-  <span style="color: #008800; font-weight: bold">end</span>
+<p><pre><code>
+SELECT employees.*, location FROM employees INNER JOIN shops
+ON employees.mall = shop.mall AND employees.shop_name = shop.shop_name;
+</code></pre></p>
 
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">parsed_rates</span>
-    returned_rates<span style="color: #333333">.</span>flatten<span style="color: #333333">.</span>sort_by(<span style="color: #333333">&amp;</span><span style="color: #AA6600">:price</span>)<span style="color: #333333">.</span>map { <span style="color: #333333">|</span>rate<span style="color: #333333">|</span> <span style="color: #333333">[</span>rate<span style="color: #333333">.</span>service_name,
-                                                          rate<span style="color: #333333">.</span>price,
-                                                          rate<span style="color: #333333">.</span>delivery_date<span style="color: #333333">]</span> }
-  <span style="color: #008800; font-weight: bold">rescue</span> <span style="color: #AA6600">ActiveMerchant</span>:<span style="color: #AA6600">:Shipping</span><span style="color: #333333">::</span><span style="color: #003366; font-weight: bold">ResponseError</span>
-    <span style="color: #008800; font-weight: bold">return</span> <span style="color: #333333">[</span><span style="background-color: #fff0f0">&quot;Sorry, this request cannot be made&quot;</span><span style="color: #333333">]</span>
-  <span style="color: #008800; font-weight: bold">end</span>
-
-  <span style="color: #003388; font-weight: bold">private</span>
-
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">ups</span>
-    <span style="color: #003366; font-weight: bold">UPS</span><span style="color: #333333">.</span>new(
-      <span style="color: #AA6600">login</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;UPS_LOGIN&#39;</span><span style="color: #333333">]</span>,
-      <span style="color: #AA6600">password</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;UPS_PASSWORD&#39;</span><span style="color: #333333">]</span>,
-      <span style="color: #AA6600">key</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;UPS_KEY&#39;</span><span style="color: #333333">]</span>
-      )
-  <span style="color: #008800; font-weight: bold">end</span>
-
-  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fedex</span>
-    <span style="color: #003366; font-weight: bold">FedEx</span><span style="color: #333333">.</span>new(
-      <span style="color: #AA6600">login</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;FEDEX_METER&#39;</span><span style="color: #333333">]</span>,
-      <span style="color: #AA6600">password</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;FEDEX_PASSWORD&#39;</span><span style="color: #333333">]</span>,
-      <span style="color: #AA6600">key</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;FEDEX_KEY&#39;</span><span style="color: #333333">]</span>,
-      <span style="color: #AA6600">account</span>: <span style="color: #003366; font-weight: bold">ENV</span><span style="color: #333333">[</span><span style="background-color: #fff0f0">&#39;FEDEX_ACCOUNT&#39;</span><span style="color: #333333">]</span>,
-      <span style="color: #007020">test</span>: <span style="color: #003388; font-weight: bold">true</span>
-      )
-  <span style="color: #008800; font-weight: bold">end</span>
-<span style="color: #008800; font-weight: bold">end</span>
-</pre></td></tr></table></div>
-
-<p>
-Good gracious, that's better! Once we dropped the parse_params method, we were able to easily test each method that returned the instances of origin, location, destination. You'll also notice that we're saving the actual request elsewhere, as the RateGetter is simply making the call-- thus, we made it a class instead of a model.
-</p>
-
-<p>
-Writing these tests in the future would ensure that we'd write cleaner code off the bat, but look at the good it did us as we went along! We talk about smells-- repetition, matching colors, the squint test-- for us, exploring these allowed us to hack out some simpler options for accomplishing the same task. So we didn't "red, green, refactor" so much as "green, refactor, green," but there was value in that, too. 
-</p>
+<p>This is only a beginning look at queries and data creation in PostgreSQL. But it should allow you some glimpse at the way PostgreSQL functions in multiple dimensions, and also some sense of the syntax of the queries and commands. </p>
